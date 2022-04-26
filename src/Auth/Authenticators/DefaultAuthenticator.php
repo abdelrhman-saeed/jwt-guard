@@ -1,6 +1,6 @@
 <?php
 
-namespace AbdelrhmanSaeed\JWT\Auth\Authenticators;
+namespace AbdelrhmanSaeed\JwtGuard\Auth\Authenticators;
 
 
 class DefaultAuthenticator extends Authenticator

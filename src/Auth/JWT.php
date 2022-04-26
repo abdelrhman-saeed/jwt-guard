@@ -1,8 +1,8 @@
 <?php
 
-namespace AbdelrhmanSaeed\JWT\Auth;
+namespace AbdelrhmanSaeed\JwtGuard\Auth;
 
-use AbdelrhmanSaeed\JWT\Authenticator;
+use AbdelrhmanSaeed\JwtGuard\Authenticator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 

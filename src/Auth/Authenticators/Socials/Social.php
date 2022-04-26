@@ -1,8 +1,8 @@
 <?php
 
-namespace AbdelrhmanSaeed\JWT\Auth\Authenticators\Socials;
+namespace AbdelrhmanSaeed\JwtGuard\Auth\Authenticators\Socials;
 
-use AbdelrhmanSaeed\JWT\Authenticator;
+use AbdelrhmanSaeed\JwtGuard\Authenticator;
 
 abstract class Social extends Authenticator
 {

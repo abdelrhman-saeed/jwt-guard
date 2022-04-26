@@ -1,6 +1,6 @@
 <?php
 
-namespace AbdelrhmanSaeed\JWT\Auth\TokenHandlers;
+namespace AbdelrhmanSaeed\JwtGuard\Auth\TokenHandlers;
 
 class DefaultTokenHandler extends TokenHandler
 {

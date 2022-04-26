@@ -1,8 +1,8 @@
 <?php
 
-namespace AbdelrhmanSaeed\JWT\Auth\Authenticators;
+namespace AbdelrhmanSaeed\JwtGuard\Auth\Authenticators;
 
-use AbdelrhmanSaeed\JWT\Auth\Authenticators\DefaultAuthenticator;
+use AbdelrhmanSaeed\JwtGuard\Auth\Authenticators\DefaultAuthenticator;
 
 
 enum AuthenticatorsEnum: string
