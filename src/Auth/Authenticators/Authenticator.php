@@ -1,0 +1,36 @@
+<?php
+
+namespace AbdelrhmanSaeed\JWT\Auth\Authenticators;
+
+
+abstract class Authenticator
+{
+
+    /**
+     * Check if the User is authenticated
+     * 
+     * it will check if there's a token in the HTTP Authorization Header With Bearer Schema.
+     * if the token is not found, then will check for the refresh token that's stored in the
+     * browser cookie
+     * 
+     * @return bool
+     */
+    public function authenticated(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Authenticate The User to the System
+     * 
+     * @return bool
+     */
+    abstract public function authenticate(): bool;
+
+    /**
+     * loging the user out by revoking the user tokens
+     * 
+     * @return bool
+     */
+    abstract public function logout(): bool;
+}
