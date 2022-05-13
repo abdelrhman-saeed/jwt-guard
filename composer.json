@@ -1,18 +1,24 @@
 {
     "name": "abdelrhman-saeed/jwt-guard",
     "description": "\"a laravel authentication guard which uses JWT to Authenticate and Authorize\"",
-    "require": {
-        "firebase/php-jwt": "*"
-    },
     "autoload": {
         "psr-4": {
-            "AbdelrhmanSaeed\\JwtGuard\\": "src/"
+            "abdelrhmanSaeed\\JwtGuard\\": "src/"
         }
     },
     "authors": [
         {
             "name": "abdelrhman-saeed",
-            "email": "abdelrhmanSaeed001@gmail.com"
+            "email": "abdelrhmanSaeed001@gmail.com",
+            "role": "backend-developer"
         }
-    ]
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "abdelrhmanSaeed\\JwtGuard\\ServiceProviders\\JwtGuardServiceProvider"
+            ]
+        }
+    }
 }
