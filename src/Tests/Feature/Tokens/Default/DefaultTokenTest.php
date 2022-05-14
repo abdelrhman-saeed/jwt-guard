@@ -1,17 +1,21 @@
 <?php
 
-namespace abdelrhmanSaeed\JwtGuard\Tests\Feature\Tokens;
+namespace abdelrhmanSaeed\JwtGuard\Tests\Feature\Tokens\Default;
 
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\DefaultToken;
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms\Key;
 use abdelrhmanSaeed\JwtGuard\Exceptions\InvalidTokenConfigException;
+
 use Facades\abdelrhmanSaeed\JwtGuard\Models\RefreshToken;
-use App\Models\User;
-use Exception;
-use Tests\TestCase;
 use Facades\Firebase\JWT\JWT;
-use Firebase\JWT\Key as JWTKey;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Firebase\JWT\Key as JWTKey;
+
+use App\Models\User;
+use Tests\TestCase;
+
+use Exception;
 use stdClass;
 
 
@@ -35,16 +39,16 @@ class DefaultTokenTest extends TestCase
                 'RS256' => Algorithms\RS256::class,
             ],
 
-            'token_alg'  => env('TOKEN_ALG', 'HS256'),
-            'token_key'  => env('TOKEN_KEY', 'abdelrhman'),
-            'passphrase' => env('TOKEN_KEY_PASSPHRASE'),
+            'token_alg'  => 'HS256',
+            'token_key'  => 'abdelrhman',
+            'passphrase' => 'passphrase',
 
             'payload' => [
-                'iss' => env('APP_URL'),
-                'aud' => env('TOKEN_AUD'),
-                'iat' => time(),
-                'ntb' => env('TOKEN_PAYLOAD_NTB', time()),
-                'exp' => env('TOKEN_PAYLOAD_EXP', time() + (60 * 15)),
+                'iss' => 'www.app.com',
+                'aud' => 'www.app.com',
+                'iat' => $now = time(),
+                'ntb' => $now,
+                'exp' => $now + (60 * 15),
             ],
 
             'refresh_token' => [

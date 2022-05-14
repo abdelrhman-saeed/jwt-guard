@@ -2,16 +2,17 @@
 
 namespace abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms;
 
+use abdelrhmanSaeed\JwtGuard\Exceptions\TokenKException;
+
 class RS256 extends Key
 {
     public function getForEncoding()
     {
-        set_error_handler(function () {
-            throw new TokenKException('Your Key\'s Passphrase is wrong');
-        }, E_WARNING);
+        $key = openssl_pkey_get_private( file_get_contents( $this->config['token_key'] ), $this->config['passphrase'] );
 
-        $key = openssl_pkey_get_private( file_get_contents( $this->config['token_key'] ), $this->configg['passphrase'] );
-        restore_error_handler();
+        if ( ! $key ) {
+            throw new TokenKException('Your Key\'s Passphrase is wrong');
+        }
 
         return $key;
     }
