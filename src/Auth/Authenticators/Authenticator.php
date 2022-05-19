@@ -1,36 +1,54 @@
 <?php
 
-namespace AbdelrhmanSaeed\JwtGuard\Auth\Authenticators;
+namespace abdelrhmanSaeed\JwtGuard\Auth\Authenticators;
 
+use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Token;
 
 abstract class Authenticator
 {
 
     /**
-     * Check if the User is authenticated
-     * 
-     * it will check if there's a token in the HTTP Authorization Header With Bearer Schema.
-     * if the token is not found, then will check for the refresh token that's stored in the
-     * browser cookie
-     * 
-     * @return bool
+     * @property Token $token
      */
-    public function authenticated(): bool
-    {
-        return true;
-    }
+    private Token $token;
 
     /**
-     * Authenticate The User to the System
+     * check if the JWT is valid
      * 
-     * @return bool
+     * @return null|array
      */
-    abstract public function authenticate(): bool;
+    abstract public function isTokenValid(): ?array;
+
 
     /**
-     * loging the user out by revoking the user tokens
+     * check if the Refresh Token is valid
      * 
      * @return bool
      */
-    abstract public function logout(): bool;
+    abstract public function isRefreshTokenValid(): ?array;
+
+    /**
+     * generates a JWT
+     * 
+     * @param null|array $user
+     * 
+     * @return string
+     */
+    abstract public function generateToken(?array $user = null): string;
+
+    /**
+     * generates a refresh token
+     * 
+     * @param bool $longLives - determines if the token will have a long expiration time or not
+     * 
+     * @return string
+     */
+    abstract public function generateRefreshToken(bool $longLives, ?int $userID = null): string;
+
+    /**
+     * revokes the refresh token
+     * 
+     * @return bool
+     */
+    abstract public function revokeRefreshToken(): bool;
 }
