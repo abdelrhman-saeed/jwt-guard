@@ -1,6 +1,6 @@
 <?php
 
-use abdelrhmanSaeed\JwtGuard\Auth\TokenHandlers\Default\Keys\Algorithms;
+use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms;
 
 
 return [

@@ -1,6 +1,6 @@
 <?php
 
-namespace AbdelrhmanSaeed\JwtGuard\Auth\Tokens;
+namespace abdelrhmanSaeed\JwtGuard\Auth\Tokens;
 
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms\Key;
 use Firebase\JWT\Key as JWTKey;
@@ -20,7 +20,7 @@ abstract class Token
      *
      * @return string
      */
-    abstract public function generateRefreshToken(): string;
+    abstract public function generateRefreshToken(bool $longLives): string;
     
     /**
      * Debug JWT to check
@@ -34,10 +34,9 @@ abstract class Token
      * Debug The Refresh Token
      * 
      * @param string $refreshToken
-     * @return bool
+     * @return null|array
      */
-    abstract public function debugRefreshToken(string $refresh_token): bool;
-
+    abstract public function debugRefreshToken(string $refresh_token): ?array;
     /**
      * Revoking Refresh Token And Access Token
      * 
