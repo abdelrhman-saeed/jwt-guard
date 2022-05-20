@@ -3,6 +3,7 @@
 namespace abdelrhmanSaeed\JwtGuard\Auth\Authenticators;
 
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Token;
+use Illuminate\Http\Request;
 
 abstract class Authenticator
 {
@@ -17,7 +18,7 @@ abstract class Authenticator
      * 
      * @return null|array
      */
-    abstract public function isTokenValid(): ?array;
+    abstract public function isTokenValid(Request $request): ?array;
 
 
     /**
@@ -25,7 +26,7 @@ abstract class Authenticator
      * 
      * @return bool
      */
-    abstract public function isRefreshTokenValid(): ?array;
+    abstract public function isRefreshTokenValid(Request $request): ?array;
 
     /**
      * generates a JWT
@@ -50,5 +51,5 @@ abstract class Authenticator
      * 
      * @return bool
      */
-    abstract public function revokeRefreshToken(): bool;
+    abstract public function revokeRefreshToken(Request $request): bool;
 }
