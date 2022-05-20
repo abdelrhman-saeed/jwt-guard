@@ -16,10 +16,8 @@ use abdelrhmanSaeed\JwtGuard\Models\RefreshToken;
 use App\Models\User;
 use Firebase\JWT\Key as JWTKey;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
 use Mockery\MockInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use stdClass;
 use Tests\TestCase;
 
 /**
@@ -34,7 +32,7 @@ class DefaultAuthenticatorTest extends TestCase
     private Authenticator|MockInterface $authenticator;
     private Request|MockInterface $request;
     private string $refresh_token = 'refresh_token';
-    private string $tokenValue = 'token';
+    private string $requestBearerTokenMethodReturnValue = 'bearerToken';
 
     protected function setUp(): void
     {
@@ -55,12 +53,11 @@ class DefaultAuthenticatorTest extends TestCase
     public function testIsTokenValid(): void
     {
         
-        $keyObjectReturnForDecodingValue = 'decoding';
-        $requestBearerTokenMethodReturnValue = 'bearerToken';
+        $keyObjectReturnForDecodingValue  = 'decoding';
         $tokenObjectDebugTokenReturnValue = User::factory()->create()->toArray();
 
         $this->request->shouldReceive('bearerToken')
-                            ->andReturn($requestBearerTokenMethodReturnValue);
+                            ->andReturn($this->requestBearerTokenMethodReturnValue);
         
 
         $this->key->shouldReceive('getForDecoding')
@@ -69,7 +66,7 @@ class DefaultAuthenticatorTest extends TestCase
         $this->token->expects($this->once())
                             ->method('debugToken')
                             ->with(
-                                    $requestBearerTokenMethodReturnValue,
+                                    $this->requestBearerTokenMethodReturnValue,
                                     $this->callback(fn ($attribute) => $attribute instanceof JWTKey)
 
                             )->willReturn($tokenObjectDebugTokenReturnValue);
@@ -87,13 +84,13 @@ class DefaultAuthenticatorTest extends TestCase
 
         $this->request->shouldReceive('cookie')
                         ->with('refresh_token')
-                        ->andReturn($refresh_token = 'some_generated_token');
+                        ->andReturn($this->refresh_token);
 
                         
         $this->token->expects($this->once())
                         ->method('debugRefreshToken')
-                        ->with($refresh_token)
-                        ->willReturn($refresh_token = ((new RefreshToken())->toArray));
+                        ->with($this->refresh_token)
+                        ->willReturn($refresh_token = ((new RefreshToken())->toArray()));
                         
         $this->assertSame($refresh_token, $this->authenticator->isRefreshTokenValid($this->request));
     }
@@ -132,9 +129,9 @@ class DefaultAuthenticatorTest extends TestCase
         $this->token->expects($this->once())
                         ->method('generateRefreshToken')
                         ->with($longLives = true)
-                        ->willReturn($refresh_token = 'refresh_token');
+                        ->willReturn($this->refresh_token);
 
-        $this->assertSame($refresh_token, $this->authenticator->generateRefreshToken($longLives, $userID));
+        $this->assertSame($this->refresh_token, $this->authenticator->generateRefreshToken($longLives, $userID));
     }
     
     /** @test */
@@ -142,17 +139,14 @@ class DefaultAuthenticatorTest extends TestCase
     {
         $this->request->shouldReceive('cookie')
                             ->with('refresh_token')
-                            ->andReturn($refresh_token = 'refresh_token');
+                            ->andReturn($this->refresh_token);
 
         $this->token->expects($this->once())
                             ->method('revokeRefreshToken')
-                            ->with($refresh_token)
+                            ->with($this->refresh_token)
                             ->willReturn($revokeTokenReturnValue = true);
 
-        $this->assertSame(
-            $revokeTokenReturnValue,
-            $this->authenticator->revokeRefreshToken($this->request)
-        );
+        $this->assertSame($revokeTokenReturnValue, $this->authenticator->revokeRefreshToken($this->request));
     }
     
     
