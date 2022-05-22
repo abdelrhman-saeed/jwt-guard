@@ -3,26 +3,38 @@
 namespace abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default;
 
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms\Key;
-use abdelrhmanSaeed\JwtGuard\Exceptions\InvalidTokenConfigException;
 use Facades\abdelrhmanSaeed\JwtGuard\Models\RefreshToken;
-use Facades\Firebase\JWT\JWT;
+use Firebase\JWT\JWT;
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Token;
+use Exception;
 use Firebase\JWT\Key as JWTKey;
-use Illuminate\Support\Facades\Log;
 
 class DefaultToken extends Token
 {
+
     /**
-     * @param array $payload - user's payload
+     * @property array $payload - user's payload data
+     */
+
+    private array $payload;
+
+    /**
      * @param array $config - token's configurations
      * @param bool $longlives - a boolean refers to if the token will have aa long time xpiration or not
      * @param Key $key
      */
-    public function __construct(
-        private array $payload, private array $config, private bool $longLives, private Key $key)
-    {    
-    }
+    public function __construct(private array $config, private Key $key) {}
     
+    /**
+     * @param array $payload - $payload property setter
+     * @return self
+     */
+    public function setPayload(array $payload): self {
+
+        $this->payload = $payload;
+        return $this;
+    }
+
     /**
      * retreving a key instance by the defined algorithm name from the supported keys in the conig file
      * 
@@ -43,30 +55,23 @@ class DefaultToken extends Token
          * retreving a key instance by the defined algorithm name
          * from the supported keys in the conig file
          */
-        try
-        {
-            return JWT::encode(
-                array_merge($this->payload, $this->config['payload']),
-                $this->getKey()->getForEncoding(),
-                $this->config['token_alg']
-            );
-        }
-        catch (\Throwable $th)
-        {
-            throw new InvalidTokenConfigException($th->getMessage());
-        }
+        return JWT::encode(
+            array_merge($this->payload, $this->config['payload']),
+            $this->getKey()->getForEncoding(),
+            $this->config['token_alg']
+        );
     }
 
     /**
      * Generates refresh token
      */
-    public function generateRefreshToken(): string
+    public function generateRefreshToken(bool $longlives): string
     {
         /**
          * Storing The Refresh Token In The Database And Sending its UUID as an actuall Token
          */
 
-        $expiration = $this->longLives ? $this->config['refresh_token']['long_expiration']
+        $expiration = $longlives ? $this->config['refresh_token']['long_expiration']
                                                 : $this->config['refresh_token']['expiration'];
 
         return RefreshToken::create([
@@ -84,15 +89,29 @@ class DefaultToken extends Token
      */
     public function debugToken(string $token, JWTKey $key): ?array
     {
-        return (array) JWT::decode($token, $key);
+        try {
+            return (array) JWT::decode($token, $key);
+        }
+        catch(Exception $e) {
+            return null;
+        }
     }
 
     /**
      * Debug The Refresh Token
+     * 
+     * @return null|array
      */
-    public function debugRefreshToken(string $refresh_token): bool
+    public function debugRefreshToken(string $refresh_token): ?array
     {
-        return now()->lt( RefreshToken::firstWhere('uuid', $refresh_token)->expire_at );
+        
+        $refresh_token = RefreshToken::firstWhere('uuid', $refresh_token);
+
+        if ( now()->lt($refresh_token->expire_at) ) {
+            return $refresh_token->toArray();
+        }
+
+        return null;
     }
 
     /**
