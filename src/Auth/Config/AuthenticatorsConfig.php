@@ -2,6 +2,6 @@
 
 return [
     'authenticators' => [
-      'default' => \abdelrhmanSaeed\JwtGuard\Auth\Authenticators\DefaultAuthenticator::class,
+      'default' => \abdelrhmanSaeed\JwtGuard\Auth\Authenticators\Default\DefaultAuthenticator::class,
     ],
 ];
