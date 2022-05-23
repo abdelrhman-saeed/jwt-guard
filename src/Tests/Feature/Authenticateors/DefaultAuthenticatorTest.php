@@ -12,7 +12,7 @@ use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms\Key;
 
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Token;
 use abdelrhmanSaeed\JwtGuard\Exceptions\JwtAuthenticatorException;
-use abdelrhmanSaeed\JwtGuard\Models\RefreshToken;
+use abdelrhmanSaeed\JwtGuard\Database\Models\RefreshToken;
 use App\Models\User;
 use Firebase\JWT\Key as JWTKey;
 use Illuminate\Http\Request;
