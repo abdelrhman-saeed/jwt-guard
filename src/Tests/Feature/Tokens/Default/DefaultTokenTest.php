@@ -6,7 +6,7 @@ use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\DefaultToken;
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms\Key;
 use abdelrhmanSaeed\JwtGuard\Exceptions\InvalidTokenConfigException;
 
-use Facades\abdelrhmanSaeed\JwtGuard\Models\RefreshToken;
+use abdelrhmanSaeed\JwtGuard\Database\Models\RefreshToken;
 use Facades\Firebase\JWT\JWT;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -58,13 +58,15 @@ class DefaultTokenTest extends TestCase
         ];
 
         $this->key = $this->mock(Key::class);
-        $this->defaultToken = new DefaultToken(
-            $this->payload = User::factory()->create()->toArray(), $this->config, true, $this->key
-        );
+        $this->defaultToken = new DefaultToken( $this->config, $this->key );
     }
 
     public function testGenerateToken(): void
     {
+
+        $this->payload = User::factory()->create()->toArray();
+        $this->defaultToken->setPayload($this->payload);
+
         $this->key->shouldReceive('getForEncoding')
                     ->once()
                     ->andReturn($this->config['token_key']);
@@ -79,24 +81,13 @@ class DefaultTokenTest extends TestCase
         $this->assertEquals($token, $this->defaultToken->generateToken());
     }
 
-    public function testGenerateTokenIfJwtEncodeThrowsAnException(): void
-    {
-        $this->key->shouldReceive('getForEncoding')->once()->andReturn($this->config['token_key']);
-
-        JWT::shouldReceive('encode')
-                ->with($this->config['payload'], $this->config['token_key'], 'HS256')
-                ->andThrows(Exception::class);
-
-        $this->expectException(InvalidTokenConfigException::class);
-        $this->defaultToken->generateToken();
-    }
-
     public function testGenerateRefreshToken(): void
     {
+        $this->defaultToken->setPayload(User::factory()->create()->toArray());
 
         $this->assertEquals(0, RefreshToken::count());
 
-        $this->defaultToken->generateRefreshToken();
+        $this->defaultToken->generateRefreshToken(true);
 
         $this->assertEquals(1, RefreshToken::count());
     }
@@ -120,36 +111,27 @@ class DefaultTokenTest extends TestCase
     public function testDebugRefreshToken(): void
     {
 
-        $refresh_token = new stdClass;
 
-        $refresh_token->uuid = 'token';
-        $refresh_token->expire_at = now()->addHour();
+        $refresh_token = RefreshToken::factory()->create();
+        $this->assertIsArray($this->defaultToken->debugRefreshToken($refresh_token->uuid));
 
-        RefreshToken::shouldReceive('firstWhere')
-                        ->once()
-                        ->with('uuid', $refresh_token->uuid)
-                        ->andReturn($refresh_token);
+        /**
+         * testing after expiring the token's time
+         */
+        $refresh_token->expire_at = now();
+        $refresh_token->save();
 
-        $this->assertTrue($this->defaultToken->debugRefreshToken($refresh_token->uuid));
+        $this->assertNull($this->defaultToken->debugRefreshToken($refresh_token->uuid));
     }
 
     public function testRevokeRefreshToken(): void
     {
-        $refresh_token = $this->mock(stdClass::class);
-        $refresh_token->shouldReceive('update')
-                        ->withAnyArgs()
-                        ->andReturnTrue();
-        
-        RefreshToken::shouldReceive('firstWhere')
-                        ->with('uuid', $token = 'token')
-                        ->andReturn($refresh_token);
+        $refresh_token = RefreshToken::factory()->create();
 
-        $this->defaultToken->revokeRefreshToken($token);
-
-        $refresh_token->expire_at = now()->addHour();
         $this->assertTrue( now()->lt($refresh_token->expire_at) );
+        $this->assertTrue( $this->defaultToken->revokeRefreshToken($refresh_token->uuid) );
 
-        $refresh_token->expire_at = now();
-        $this->assertTrue( now()->gt($refresh_token->expire_at) );
+        $refresh_token->refresh();
+        $this->assertFalse( now()->lt($refresh_token->expire_at) );
     }
 }

@@ -3,8 +3,9 @@
 namespace abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default;
 
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Default\Keys\Algorithms\Key;
-use Facades\abdelrhmanSaeed\JwtGuard\Models\RefreshToken;
-use Firebase\JWT\JWT;
+use abdelrhmanSaeed\JwtGuard\Database\Models\RefreshToken;
+
+use Facades\Firebase\JWT\JWT;
 use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Token;
 use Exception;
 use Firebase\JWT\Key as JWTKey;
