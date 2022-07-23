@@ -2,17 +2,10 @@
 
 namespace abdelrhmanSaeed\JwtGuard\Auth\Authenticators;
 
-use abdelrhmanSaeed\JwtGuard\Auth\Tokens\Token;
 use Illuminate\Http\Request;
 
 abstract class Authenticator
 {
-
-    /**
-     * @property Token $token
-     */
-    private Token $token;
-
     /**
      * check if the JWT is valid
      * 
@@ -24,7 +17,7 @@ abstract class Authenticator
     /**
      * check if the Refresh Token is valid
      * 
-     * @return bool
+     * @return null|array
      */
     abstract public function isRefreshTokenValid(Request $request): ?array;
 

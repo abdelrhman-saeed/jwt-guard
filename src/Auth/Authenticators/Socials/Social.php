@@ -1,9 +1,11 @@
 <?php
 
-namespace AbdelrhmanSaeed\JwtGuard\Auth\Authenticators\Socials;
+namespace abdelrhmanSaeed\JwtGuard\Auth\Authenticators\Socials;
 
-use AbdelrhmanSaeed\JwtGuard\Authenticator;
+use abdelrhmanSaeed\JwtGuard\Authenticator;
 
-abstract class Social extends Authenticator
-{
+interface Social extends Authenticator {   
+
+    public function setRedirectURI(string $redirectURI): void;
+    
 }

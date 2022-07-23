@@ -69,7 +69,7 @@ class Jwt implements Guard
                     'Authorization',
                     'Bearer '. $this->authenticator->generateToken( User::find($refreshToken['user_id'])->toArray() )
                 );
-       }
+        }
 
        $this->user = null;
   
@@ -82,7 +82,7 @@ class Jwt implements Guard
      * @return bool
      */
     public function guest() {
-        return $this->check();
+        return ! $this->check();
     }
 
     /**
@@ -120,7 +120,6 @@ class Jwt implements Guard
             return false;
         }
         
-        
         $this->user = $user;
         unset($user);
         
@@ -154,5 +153,9 @@ class Jwt implements Guard
      */
     public function setUser(Authenticatable $user): void {
         $this->user = $user;
+    }
+
+    public function logout(): void {
+        $this->authenticator->revokeRefreshToken(app(Request::class));
     }
 }
